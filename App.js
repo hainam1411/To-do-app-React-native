@@ -1,20 +1,46 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import {Alert, ScrollView, StyleSheet, Text, Touchable, TouchableOpacity, View} from 'react-native';
+import Task from "./components/Task";
+import styles from "./App.components.style";
+import Form from "./components/Form";
+import {useState} from "react";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    const [taskList, setTaskList] = useState([])
+    const handleAddTask = (task) => {
+        // TODO: add task
+        setTaskList([...taskList, task])
+    }
+    const handleDeleteTask = (index) => {
+        Alert.alert('Delete task', 'Are you sure delete this task?', [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+            },
+            {text: 'OK', onPress: () =>{
+                let taskListTmp = [...taskList];
+                taskListTmp.splice(index,1);
+                setTaskList(taskListTmp);
+                }},
+        ]);
+    }
+    return (<View style={styles.container}>
+            {/*body*/}
+            <View style={styles.body}>
+                <Text style={styles.header}>Todo List</Text>
+                {/*List*/}
+                <ScrollView style={styles.items}>
+                    {taskList.map((item, index) => {
+                        return <Task key={index} title={item} number={index + 1} onDeleteTask={() => handleDeleteTask(index)}/>
+                    })}
+
+                </ScrollView>
+            </View>
+
+            {/*input*/}
+            <Form onAddTask={handleAddTask}/>
+        </View>);
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
